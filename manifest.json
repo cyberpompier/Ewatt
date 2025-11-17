@@ -1,0 +1,21 @@
+{
+  "short_name": "Élec Calc",
+  "name": "Calculateur de Coût Électrique",
+  "icons": [
+    {
+      "src": "/icon-192x192.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    },
+    {
+      "src": "/icon-512x512.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    }
+  ],
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#1e1e1e",
+  "background_color": "#121212",
+  "description": "Estimez la consommation électrique de vos appareils."
+}
