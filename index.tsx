@@ -74,7 +74,7 @@ const App = () => {
         .app-container {
           display: flex;
           flex-direction: column;
-          gap: 2rem;
+          gap: 1.5rem;
         }
         .app-header {
           text-align: center;
@@ -91,19 +91,19 @@ const App = () => {
         .card {
           background-color: var(--surface-color);
           border-radius: 12px;
-          padding: 1.5rem;
+          padding: 1.25rem;
           border: 1px solid var(--border-color);
           box-shadow: 0 4px 6px rgba(0,0,0,0.1);
         }
         .input-section {
           display: flex;
           flex-direction: column;
-          gap: 1.5rem;
+          gap: 1.25rem;
         }
         .input-group {
           display: flex;
           align-items: center;
-          gap: 1rem;
+          gap: 0.75rem;
         }
         .input-group .icon {
           color: var(--primary-color);
@@ -111,6 +111,7 @@ const App = () => {
         }
         .input-group .control {
           flex-grow: 1;
+          min-width: 0;
         }
         .input-group label {
           display: block;
@@ -151,9 +152,9 @@ const App = () => {
             background-color: transparent;
             border: none;
             color: var(--text-secondary-color);
-            padding: 0.5rem 0.75rem;
+            padding: 0.4rem 0.6rem;
             cursor: pointer;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             transition: background-color 0.2s, color 0.2s;
             border-radius: 6px;
             white-space: nowrap;
@@ -190,11 +191,11 @@ const App = () => {
         .results-grid {
           display: grid;
           grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
-          gap: 1rem;
+          gap: 0.75rem;
         }
         .result-card {
           background-color: var(--background-color);
-          padding: 1rem;
+          padding: 0.75rem;
           border-radius: 8px;
           border: 1px solid var(--border-color);
           text-align: center;
@@ -207,7 +208,7 @@ const App = () => {
         }
         .result-card .value {
           color: var(--primary-color);
-          font-size: 1.75rem;
+          font-size: 1.5rem;
           font-weight: 700;
         }
       `}</style>
