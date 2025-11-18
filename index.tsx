@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useMemo } from 'react';
-import { createRoot } from 'react-dom/client';
+import React, { useState, useEffect, useMemo } from 'https://aistudiocdn.com/react@18.2.0';
+import { createRoot } from 'https://aistudiocdn.com/react-dom@18.2.0/client';
 
 // --- SVG Icons ---
 const PowerIcon = () => (
