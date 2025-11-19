@@ -1,90 +1,80 @@
-const CACHE_NAME = 'electric-cost-calculator-v3';
-// Cache a minima l'essentiel pour le shell de l'application.
+const CACHE_NAME = 'electric-cost-calculator-v7';
+
+// Liste précise des fichiers à mettre en cache pour le fonctionnement hors ligne
+// Inclut les fichiers locaux et les dépendances externes (esm.sh, google fonts)
 const urlsToCache = [
-  '/',
-  '/index.html',
-  '/manifest.json',
-  '/icon-192x192.png',
-  '/icon-512x512.png',
+  './',
+  './index.html',
+  './index.tsx',
+  './manifest.json',
+  './icon.svg',
+  'https://esm.sh/react@18.2.0',
+  'https://esm.sh/react-dom@18.2.0/client',
+  'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap'
 ];
 
-self.addEventListener('install', event => {
+self.addEventListener('install', (event) => {
+  // Force l'activation immédiate du nouveau service worker
+  self.skipWaiting();
+  
   event.waitUntil(
     caches.open(CACHE_NAME)
-      .then(cache => {
-        console.log('Opened cache and caching app shell');
+      .then((cache) => {
+        console.log('Ouverture du cache et ajout des fichiers essentiels');
         return cache.addAll(urlsToCache);
       })
+      .catch((err) => {
+        console.error('Erreur lors de la mise en cache des fichiers:', err);
+      })
   );
-  self.skipWaiting();
 });
 
-self.addEventListener('activate', event => {
+self.addEventListener('activate', (event) => {
+  // Nettoyage des anciens caches pour éviter les conflits de version
   const cacheWhitelist = [CACHE_NAME];
   event.waitUntil(
-    caches.keys().then(cacheNames => {
+    caches.keys().then((cacheNames) => {
       return Promise.all(
-        cacheNames.map(cacheName => {
+        cacheNames.map((cacheName) => {
           if (cacheWhitelist.indexOf(cacheName) === -1) {
-            console.log('Deleting old cache:', cacheName);
+            console.log('Suppression de l\'ancien cache:', cacheName);
             return caches.delete(cacheName);
           }
         })
       );
-    })
+    }).then(() => self.clients.claim()) // Prendre le contrôle immédiat des clients (pages ouvertes)
   );
-  return self.clients.claim();
 });
 
-self.addEventListener('fetch', event => {
-  const { request } = event;
-  const url = new URL(request.url);
-
-  // Stratégie pour les dépendances externes (CDN, polices) :
-  // Stale-While-Revalidate : On sert depuis le cache pour la vitesse,
-  // puis on met à jour le cache en arrière-plan.
-  if (url.origin === 'https://aistudiocdn.com' || url.origin === 'https://fonts.googleapis.com' || url.origin === 'https://fonts.gstatic.com') {
-    event.respondWith(
-      caches.open(CACHE_NAME).then(cache => {
-        return cache.match(request).then(cachedResponse => {
-          const fetchPromise = fetch(request).then(networkResponse => {
-            if (networkResponse.ok) {
-              cache.put(request, networkResponse.clone());
-            }
-            return networkResponse;
-          });
-          return cachedResponse || fetchPromise;
-        });
-      })
-    );
-    return;
-  }
-  
-  // Stratégie pour les autres requêtes (ex: /index.tsx):
-  // Network First : On essaie d'abord le réseau pour avoir les dernières mises à jour,
-  // et on se rabat sur le cache si le réseau est indisponible.
+self.addEventListener('fetch', (event) => {
   event.respondWith(
-    fetch(request)
-      .then(response => {
-        // Si la requête réseau réussit, on met à jour le cache
-        if (response.ok) {
-          const responseToCache = response.clone();
-          caches.open(CACHE_NAME).then(cache => {
-            cache.put(request, responseToCache);
-          });
-        }
-        return response;
-      })
-      .catch(() => {
-        // Si la requête réseau échoue, on cherche dans le cache
-        return caches.match(request).then(response => {
-          // Si on est en mode navigation (chargement de page) et que la requête n'est pas dans le cache,
-          // on renvoie la page principale de l'application (le shell).
-          if (request.mode === 'navigate' && !response) {
-            return caches.match('/');
-          }
+    caches.match(event.request)
+      .then((response) => {
+        // Si la ressource est dans le cache, on la retourne immédiatement
+        if (response) {
           return response;
-        });
+        }
+
+        // Sinon, on la récupère sur le réseau
+        return fetch(event.request).then(
+          (response) => {
+            // Vérification basique de la réponse
+            if (!response || response.status !== 200 || response.type !== 'basic' && response.type !== 'cors') {
+              return response;
+            }
+
+            // On clone la réponse car elle ne peut être lue qu'une seule fois
+            const responseToCache = response.clone();
+
+            // On met en cache la nouvelle ressource pour la prochaine fois
+            caches.open(CACHE_NAME)
+              .then((cache) => {
+                cache.put(event.request, responseToCache);
+              });
+
+            return response;
+          }
+        );
       })
   );
 });

@@ -7,9 +7,10 @@
     <meta name="description" content="Estimez la consommation électrique de vos appareils.">
     
     <!-- PWA Tags -->
-    <link rel="manifest" href="/manifest.json">
+    <link rel="manifest" href="./manifest.json">
     <meta name="theme-color" content="#1a202c">
-    <link rel="apple-touch-icon" href="/icon-192x192.png">
+    <link rel="icon" href="./icon.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="./icon.svg">
 
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap');
@@ -58,19 +59,10 @@
             -moz-appearance: textfield;
         }
     </style>
-
-    if ("serviceWorker" in navigator) {
-  window.addEventListener("load", () => {
-    navigator.serviceWorker.register("/sw.js");
-  });
-    }
-
 <script type="importmap">
 {
   "imports": {
-    "react": "https://aistudiocdn.com/react@18.2.0",
-    "react-dom/": "https://aistudiocdn.com/react-dom@18.2.0/",
-    "react/": "https://aistudiocdn.com/react@18.2.0/"
+    "react/": "https://aistudiocdn.com/react@^19.2.0/"
   }
 }
 </script>
@@ -78,6 +70,15 @@
 <body>
     <div id="root"></div>
     <noscript>Vous devez activer JavaScript pour utiliser cette application.</noscript>
-    <script type="module" src="/index.tsx"></script>
+    <script type="module" src="./index.tsx"></script>
+    <script>
+        if ("serviceWorker" in navigator) {
+            window.addEventListener("load", () => {
+                navigator.serviceWorker.register("./sw.js")
+                    .then(registration => console.log('SW registered: ', registration))
+                    .catch(error => console.log('SW registration failed: ', error));
+            });
+        }
+    </script>
 </body>
 </html>

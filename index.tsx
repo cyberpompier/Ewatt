@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useMemo } from 'https://aistudiocdn.com/react@18.2.0';
-import { createRoot } from 'https://aistudiocdn.com/react-dom@18.2.0/client';
+import React, { useState, useMemo } from 'https://esm.sh/react@18.2.0';
+import { createRoot } from 'https://esm.sh/react-dom@18.2.0/client';
 
 // --- SVG Icons ---
 const PowerIcon = () => (
@@ -55,18 +55,6 @@ const App = () => {
       maximumFractionDigits: 4,
     }).format(value);
   };
-
-  useEffect(() => {
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/sw.js').then(registration => {
-          console.log('SW registered: ', registration);
-        }).catch(registrationError => {
-          console.log('SW registration failed: ', registrationError);
-        });
-      });
-    }
-  }, []);
   
   return (
     <>
